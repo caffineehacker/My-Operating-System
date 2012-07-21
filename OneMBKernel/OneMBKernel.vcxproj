@@ -1,0 +1,184 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{EF44F472-83CD-484E-AAEB-02A0D4F8618B}</ProjectGuid>
+    <RootNamespace>OneMBKernel</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>$(SolutionDir)Include</IncludePath>
+    <ReferencePath />
+    <LibraryPath />
+    <SourcePath />
+    <ExcludePath />
+    <TargetName>onembstb</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>$(SolutionDir)Include</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ReferencePath />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LibraryPath />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <SourcePath />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ExcludePath />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <PreprocessorDefinitions>ARCH_X86;ONEMB_STUB;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ExceptionHandling>false</ExceptionHandling>
+      <BufferSecurityCheck>
+      </BufferSecurityCheck>
+      <BasicRuntimeChecks>
+      </BasicRuntimeChecks>
+      <RuntimeLibrary>
+      </RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(SolutionDir)include</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <IgnoreStandardIncludePath>true</IgnoreStandardIncludePath>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <EntryPointSymbol>kernel_entry</EntryPointSymbol>
+      <SetChecksum>false</SetChecksum>
+      <BaseAddress>0x100000</BaseAddress>
+      <RandomizedBaseAddress>
+      </RandomizedBaseAddress>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
+      <FixedBaseAddress>false</FixedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <EnableUAC>
+      </EnableUAC>
+      <GenerateMapFile>true</GenerateMapFile>
+      <SubSystem>Native</SubSystem>
+      <Driver>Driver</Driver>
+      <SectionAlignment>512</SectionAlignment>
+      <MapFileName>
+      </MapFileName>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>EnableAllWarnings</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>ARCH_X86;ONEMB_STUB;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ExceptionHandling>false</ExceptionHandling>
+      <BufferSecurityCheck>
+      </BufferSecurityCheck>
+      <BasicRuntimeChecks>
+      </BasicRuntimeChecks>
+      <RuntimeLibrary>
+      </RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(SolutionDir)include</AdditionalIncludeDirectories>
+      <IgnoreStandardIncludePath>true</IgnoreStandardIncludePath>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
+      <EntryPointSymbol>kernel_entry</EntryPointSymbol>
+      <SetChecksum>false</SetChecksum>
+      <BaseAddress>0x100000</BaseAddress>
+      <RandomizedBaseAddress>
+      </RandomizedBaseAddress>
+      <FixedBaseAddress>false</FixedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <EnableUAC>
+      </EnableUAC>
+      <GenerateMapFile>true</GenerateMapFile>
+      <SubSystem>Native</SubSystem>
+      <Driver>Driver</Driver>
+      <SectionAlignment>512</SectionAlignment>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\My Operating System\dma.cpp" />
+    <ClCompile Include="..\My Operating System\filesystem.cpp" />
+    <ClCompile Include="..\My Operating System\floppy.cpp" />
+    <ClCompile Include="..\My Operating System\gdt.cpp" />
+    <ClCompile Include="..\My Operating System\hal.cpp" />
+    <ClCompile Include="..\My Operating System\idt.cpp" />
+    <ClCompile Include="..\My Operating System\kernel_entry.cpp" />
+    <ClCompile Include="..\My Operating System\pagetable.cpp" />
+    <ClCompile Include="..\My Operating System\physical_memorymgr.cpp" />
+    <ClCompile Include="..\My Operating System\PIC8259A.cpp" />
+    <ClCompile Include="..\My Operating System\PIT8253.cpp" />
+    <ClCompile Include="..\My Operating System\ports.cpp" />
+    <ClCompile Include="..\My Operating System\syscall.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\My Operating System\dma.h" />
+    <ClInclude Include="..\My Operating System\filesystem.h" />
+    <ClInclude Include="..\My Operating System\floppy.h" />
+    <ClInclude Include="..\My Operating System\gdt.h" />
+    <ClInclude Include="..\My Operating System\hal.h" />
+    <ClInclude Include="..\My Operating System\idt.h" />
+    <ClInclude Include="..\My Operating System\multiboot.h" />
+    <ClInclude Include="..\My Operating System\pagetable.h" />
+    <ClInclude Include="..\My Operating System\physical_memorymgr.h" />
+    <ClInclude Include="..\My Operating System\PIC8259A.h" />
+    <ClInclude Include="..\My Operating System\PIT8253.h" />
+    <ClInclude Include="..\My Operating System\ports.h" />
+    <ClInclude Include="..\My Operating System\syscall.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CRT\CRT.vcxproj">
+      <Project>{1a33ad33-0ada-4cb7-af49-82f19e7ac41e}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Fat12\Fat12.vcxproj">
+      <Project>{de379cfb-9b23-47bd-83d3-90d5240bf13e}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

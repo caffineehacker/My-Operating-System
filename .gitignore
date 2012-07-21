@@ -1,0 +1,7 @@
+*.user
+Debug
+Release
+*.suo
+OtherStuff
+*.patch
+ipch
