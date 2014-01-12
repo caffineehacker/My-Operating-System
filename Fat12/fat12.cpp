@@ -99,14 +99,14 @@ void fsysFat12Close(PFILE file)
 	/* No need to do anything to close a file for FAT12 */
 }
 
-PFILESYSTEM fat12_mount(PFAT12_BOOTSECTOR bootsector)
+PFILESYSTEM fat12_mount(PFAT12_BOOTSECTOR bootsector, PFILESYSTEM fileSystem)
 {
-	strcpy (_fat12_fsys.Name, "FAT12");
-	_fat12_fsys.Directory = fsysFat12FileEntry;
+	strcpy (fileSystem->Name, "FAT12");
+	fileSystem->Directory = fsysFat12FileEntry;
 	/*_fat12_fsys.Mount = fsysFat12Mount;*/
-	_fat12_fsys.Open = fsysFat12Open;
-	_fat12_fsys.Read = fsysFat12Read;
-	_fat12_fsys.Close = fsysFat12Close;
+	fileSystem->Open = fsysFat12Open;
+	fileSystem->Read = fsysFat12Read;
+	fileSystem->Close = fsysFat12Close;
 
 	/* Store mount info */
 	_fat12_MountInfo.numSectors = bootsector->Bpb.NumSectors;

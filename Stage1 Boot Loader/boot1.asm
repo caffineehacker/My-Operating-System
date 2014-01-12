@@ -1,4 +1,4 @@
-
+[map all boot1.map]
 ;*********************************************
 ;	Boot1.asm
 ;		- A Simple Bootloader

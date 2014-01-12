@@ -110,24 +110,24 @@ void vmmngr_initialize(uint32_t currentPhysicalBase, uint32_t currentVirtualBase
 		return;
  
 	///* Allocates a 4MB identity page table */
-	//pagetable* table2 = (pagetable*)physical_memorymgr_allocate_block();
+	pagetable* table2 = (pagetable*)physical_memorymgr_allocate_block();
 	//if (!table2)
 	//	return;
 
 	/* Clear page table */
 	memset(table, 0, sizeof(pagetable));
 
-	///* 1st 4mb are idenitity mapped */
-	//for (int i=0, frame=0x0, virt=0xC0000000; i<1024; i++, frame+=4096, virt+=4096)
-	//{
- //		/* Create a new page */
-	//	pagetable_entry page = 0;
-	//	pagetable_entry_add_attrib(&page, PAGETABLE_ENTRY_PRESENT_MASK);
- //		pagetable_entry_set_frame(&page, frame);
+	/* 1st 4mb are idenitity mapped */
+	for (int i=0, frame=0x0, virt=0xC0000000; i<1024; i++, frame+=4096, virt+=4096)
+	{
+ 		/* Create a new page */
+		pagetable_entry page = 0;
+		pagetable_entry_add_attrib(&page, PAGETABLE_ENTRY_PRESENT_MASK);
+ 		pagetable_entry_set_frame(&page, frame);
 
-	//	/* And add it to the page table */
-	//	table2->m_entries[PAGE_TABLE_INDEX(virt)] = page;
-	//}
+		/* And add it to the page table */
+		table2->m_entries[PAGE_TABLE_INDEX(virt)] = page;
+	}
 
 	/* Map current code to virtual address */
 	for (int i = 0, frame = currentPhysicalBase, virt = currentVirtualBase; i<1024; i++, frame+=4096, virt+=4096)
@@ -155,10 +155,10 @@ void vmmngr_initialize(uint32_t currentPhysicalBase, uint32_t currentVirtualBase
 	pagedirectory_entry_set_frame(entry, (uint32_t)table);
 
 	///* 4MB identity directory */
-	//pagedirectory_entry* entry2 = &dir->m_entries[PAGE_DIRECTORY_INDEX(0xC0000000)];
-	//pagedirectory_entry_add_attrib(entry2, PAGEDIRECTORY_ENTRY_PRESENT_MASK);
-	//pagedirectory_entry_add_attrib(entry2, PAGEDIRECTORY_ENTRY_WRITABLE_MASK);
-	//pagedirectory_entry_set_frame(entry2, (uint32_t)table2);
+	pagedirectory_entry* entry2 = &dir->m_entries[PAGE_DIRECTORY_INDEX(0xC0000000)];
+	pagedirectory_entry_add_attrib(entry2, PAGEDIRECTORY_ENTRY_PRESENT_MASK);
+	pagedirectory_entry_add_attrib(entry2, PAGEDIRECTORY_ENTRY_WRITABLE_MASK);
+	pagedirectory_entry_set_frame(entry2, (uint32_t)table2);
 
 	/* Store current PDBR */
 	_cur_pdbr = (uint32_t)&dir->m_entries;

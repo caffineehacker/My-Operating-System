@@ -50,31 +50,43 @@ inline void flpydsk_wait_irq()
 /* Initialize DMA */
 bool flpydsk_initialize_dma(unsigned length)
 {
-	union{
-		uint8_t byte[4]; /* Lo[0], Mid[1], Hi[2] */
-		unsigned long l;
-	} a, c;
+	//union{
+	//	uint8_t byte[4]; /* Lo[0], Mid[1], Hi[2] */
+	//	unsigned long l;
+	//} a, c;
 
-	a.l=(unsigned)DMA_BUFFER;
-	c.l=(unsigned)length-1;
+	//a.l=(unsigned)DMA_BUFFER;
+	//c.l=(unsigned)length-1;
 
-	/* Check for buffer issues */
-	if ((a.l >> 24) || (c.l >> 16) || (((a.l & 0xffff) + c.l) >> 16))
-	{
-		return false;
-	}
+	///* Check for buffer issues */
+	//if ((a.l >> 24) || (c.l >> 16) || (((a.l & 0xffff) + c.l) >> 16))
+	//{
+	//	return false;
+	//}
 
-	dma_reset(1);
-	dma_mask_channel(FDC_DMA_CHANNEL); /* Mask channel 2 */
-	dma_reset_flipflop(1); /* Flipflop reset on DMA 1 */
+	//dma_reset(1);
+	//dma_mask_channel(FDC_DMA_CHANNEL); /* Mask channel 2 */
+	//dma_reset_flipflop(1); /* Flipflop reset on DMA 1 */
 
-	dma_set_address(FDC_DMA_CHANNEL, a.byte[0],a.byte[1]); /* Buffer address */
-	dma_reset_flipflop(1); /* Flipflop reset on DMA 1 */
+	//dma_set_address(FDC_DMA_CHANNEL, a.byte[0],a.byte[1]); /* Buffer address */
+	//dma_reset_flipflop(1); /* Flipflop reset on DMA 1 */
 
-	dma_set_count(FDC_DMA_CHANNEL, c.byte[0],c.byte[1]); /* Set count */
-	dma_set_read(FDC_DMA_CHANNEL);
+	////dma_set_count(FDC_DMA_CHANNEL, c.byte[0],c.byte[1]); /* Set count */
+	//dma_set_count(FDC_DMA_CHANNEL, 0xFF, 0x23);
+	//dma_set_external_page_register(FDC_DMA_CHANNEL, 0);
+	//dma_set_read(FDC_DMA_CHANNEL);
 
-	dma_unmask_all(1); /* Unmask dma channel 2 */
+	//dma_unmask_all(1); /* Unmask dma channel 2 */
+
+	outb (0x0a,0x06);	//mask dma channel 2
+	outb (0xd8,0xff);	//reset master flip-flop
+	outb (0x04, 0);     //address=0x1000 
+	outb (0x04, 0x10);
+	outb (0xd8, 0xff);  //reset master flip-flop
+	outb (0x05, 0xff);  //count to 0x23ff (number of bytes in a 3.5" floppy disk track)
+	outb (0x05, 0x23);
+	outb (0x80, 0);     //external page register = 0
+	outb (0x0a, 0x02);  //unmask dma channel 2
 
 	return true;
 }
@@ -82,9 +94,11 @@ bool flpydsk_initialize_dma(unsigned length)
 /* Prepare the DMA for read transfer */
 void flpydsk_dma_read()
 {
-	dma_mask_channel(FDC_DMA_CHANNEL); /* Mask channel 2 */
+	//dma_mask_channel(FDC_DMA_CHANNEL); /* Mask channel 2 */
+	outb(0x0a, 0x06);
 	outb(DMA0_MODE_REG, DMA_MODE_TRANSFER_SINGLE | DMA_MODE_MASK_AUTO | DMA_MODE_READ_TRANSFER | 0x02); /* Single transfer, address increment, autoinit, read, channel 2 */
-	dma_unmask_all(1); /* Unmask dma channel 2 */
+	outb(0x0a, 0x02);
+	//dma_unmask_all(1); /* Unmask dma channel 2 */
 }
  
 /* Prepare the DMA for write transfer */
@@ -194,9 +208,10 @@ void flpydsk_drive_data(uint8_t stepr, uint8_t loadt, uint8_t unloadt, bool dma)
 	/* Send command */
 	flpydsk_send_command(FDC_CMD_SPECIFY);
 	data = ((stepr & 0xf) << 4) | (unloadt & 0xf);
-		flpydsk_send_command(data);
+	flpydsk_send_command(data);
+	
 	data = ((loadt << 1) | (dma ? 0 : 1 ));
-		flpydsk_send_command(data);
+	flpydsk_send_command(data);
 }
 
 /* Calibrates the drive */
@@ -218,7 +233,7 @@ int flpydsk_calibrate(uint8_t drive)
 		flpydsk_wait_irq();
 		flpydsk_check_int(&st0, &cyl);
 
-		/* Did we fine cylinder 0? if so, we are done */
+		/* Did we find cylinder 0? if so, we are done */
 		if (!cyl)
 		{
 			flpydsk_control_motor(false);
@@ -271,11 +286,11 @@ void flpydsk_read_sector_imp(uint8_t head, uint8_t track, uint8_t sector)
 {
 	uint32_t st0, cyl;
 
-	/* Initialize DMA */
-	flpydsk_initialize_dma(512);
-
 	/* Set the DMA for read transfer */
-	dma_set_read(FDC_DMA_CHANNEL);
+	//dma_set_read(FDC_DMA_CHANNEL);
+	outb (0x0a, 0x06); //mask dma channel 2
+	outb (0x0b, 0x56); //single transfer, address increment, autoinit, read, channel 2
+	outb (0x0a, 0x02); //unmask dma channel 2
 
 	/* Read in a sector */
 	flpydsk_send_command(FDC_CMD_READ_SECT | FDC_CMD_EXT_MULTITRACK | FDC_CMD_EXT_SKIP | FDC_CMD_EXT_DENSITY);
@@ -306,6 +321,10 @@ int flpydsk_seek(uint8_t cyl, uint8_t head)
 
 	if (_CurrentDrive >= 4)
 		return -1;
+
+	//flpydsk_check_int(&st0, &cyl0); // No need to seek if we're already here
+	//if (cyl0 == cyl)
+	//	return 0;
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -349,6 +368,9 @@ void flpydsk_install(int irq)
 	/* Install irq handler */
 	InstallInterruptHandler(irq, i86_flpy_irq);
 	SetSyscallFunctionHandler(flpydsk_handleReadSectorRequest, SYSCALL_READ_FLOPPY_SECTOR);
+
+	/* Initialize DMA */
+	flpydsk_initialize_dma(512);
 
 	/* Reset the fdc */
 	flpydsk_reset();
@@ -402,5 +424,6 @@ void flpydsk_mount_filesystem()
 	/* Read boot sector */
 	bootsector = (PFAT12_BOOTSECTOR)flpydsk_read_sector(0);
 
-	volRegisterFileSystem(fat12_mount(bootsector), 0);
+	// TODO: There is a bug here!!!!!
+	volRegisterFileSystem(fat12_mount(bootsector, (PFILESYSTEM)(0x100000)), 0);
 }

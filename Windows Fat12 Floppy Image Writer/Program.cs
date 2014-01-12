@@ -105,7 +105,11 @@ namespace Windows_Fat12_Floppy_Image_Writer
             string imageFileName = args[0];
 
             FileInfo image = new FileInfo(imageFileName);
-            FileStream fStream = image.Open(FileMode.Open, FileAccess.ReadWrite);
+            FileStream fStream;
+            if (image.Exists)
+                fStream = image.Open(FileMode.Open, FileAccess.ReadWrite);
+            else
+                fStream = createNewFloppyImage(image);
 
             FAT12_BOOT_SECTOR bootSector = LoadBootSector(fStream);
             FAT12_MOUNT_INFO mount_info = new FAT12_MOUNT_INFO();
@@ -122,6 +126,47 @@ namespace Windows_Fat12_Floppy_Image_Writer
 	        {
                 SaveFileToDiskImage(args[i], fStream, bootSector, mount_info);
 	        }
+        }
+
+        private static unsafe FileStream createNewFloppyImage(FileInfo image)
+        {
+            FileStream fStream = image.Create();
+
+            FAT12_BOOT_SECTOR bootSector = new FAT12_BOOT_SECTOR();
+            bootSector.Bpb.OEMName[0] = (byte)'T';
+            bootSector.Bpb.OEMName[1] = (byte)'i';
+            bootSector.Bpb.OEMName[2] = (byte)'m';
+            bootSector.Bpb.OEMName[3] = 0;
+            bootSector.Bpb.OEMName[4] = 0;
+            bootSector.Bpb.OEMName[5] = 0;
+            bootSector.Bpb.OEMName[6] = 0;
+            bootSector.Bpb.OEMName[7] = 0;
+
+            bootSector.Bpb.BytesPerSector = 512;
+            bootSector.Bpb.SectorsPerCluster = 1;
+            bootSector.Bpb.ReservedSectors = 1;
+            bootSector.Bpb.NumberOfFats = 2;
+            bootSector.Bpb.NumDirEntries = 224;
+            bootSector.Bpb.NumSectors = 2880;
+            bootSector.Bpb.Media = 0xf0;
+            bootSector.Bpb.SectorsPerFat = 9;
+            bootSector.Bpb.SectorsPerTrack = 12;
+            bootSector.Bpb.HeadsPerCyl = 2;
+            bootSector.Bpb.HiddenSectors = 0;
+
+            byte[] buf = new byte[sizeof(FAT12_BOOT_SECTOR)];
+            GCHandle pinnedBuf = GCHandle.Alloc(buf, GCHandleType.Pinned);
+            Marshal.StructureToPtr(bootSector, pinnedBuf.AddrOfPinnedObject(), true);
+            fStream.Write(buf, 0, buf.Length);
+
+            fStream.Seek(510, SeekOrigin.Begin);
+            fStream.WriteByte(0x55);
+            fStream.WriteByte(0xAA);
+
+            fStream.Seek(1474559, SeekOrigin.Begin);
+            fStream.WriteByte(0);
+
+            return fStream;
         }
 
         private static FAT12_BOOT_SECTOR LoadBootSector(FileStream fStream)

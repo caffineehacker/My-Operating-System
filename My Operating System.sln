@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kernel", "My Operating System\My Operating System.vcxproj", "{215AA9FE-D589-4B00-A3DC-54FE99659211}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1A33AD33-0ADA-4CB7-AF49-82F19E7AC41E} = {1A33AD33-0ADA-4CB7-AF49-82F19E7AC41E}
@@ -16,8 +16,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Boot Loader", "Stage1 Boot 
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mkdosfs", "mkdosfs\mkdosfs.vcxproj", "{3D415D93-27A8-496E-88E2-72E5706DB7F6}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MCopy", "MCopy\MCopy.vcxproj", "{4682D99B-0146-4570-935B-0F19C64B5DFE}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CRT", "CRT\CRT.vcxproj", "{1A33AD33-0ADA-4CB7-AF49-82F19E7AC41E}"
 EndProject
@@ -73,14 +71,6 @@ Global
 		{3D415D93-27A8-496E-88E2-72E5706DB7F6}.Release|Win32.ActiveCfg = Release|Win32
 		{3D415D93-27A8-496E-88E2-72E5706DB7F6}.Release|Win32.Build.0 = Release|Win32
 		{3D415D93-27A8-496E-88E2-72E5706DB7F6}.Release|x86.ActiveCfg = Release|Win32
-		{4682D99B-0146-4570-935B-0F19C64B5DFE}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
-		{4682D99B-0146-4570-935B-0F19C64B5DFE}.Debug|Win32.ActiveCfg = Debug|Win32
-		{4682D99B-0146-4570-935B-0F19C64B5DFE}.Debug|Win32.Build.0 = Debug|Win32
-		{4682D99B-0146-4570-935B-0F19C64B5DFE}.Debug|x86.ActiveCfg = Debug|Win32
-		{4682D99B-0146-4570-935B-0F19C64B5DFE}.Release|Mixed Platforms.ActiveCfg = Release|Win32
-		{4682D99B-0146-4570-935B-0F19C64B5DFE}.Release|Win32.ActiveCfg = Release|Win32
-		{4682D99B-0146-4570-935B-0F19C64B5DFE}.Release|Win32.Build.0 = Release|Win32
-		{4682D99B-0146-4570-935B-0F19C64B5DFE}.Release|x86.ActiveCfg = Release|Win32
 		{1A33AD33-0ADA-4CB7-AF49-82F19E7AC41E}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
 		{1A33AD33-0ADA-4CB7-AF49-82F19E7AC41E}.Debug|Mixed Platforms.Build.0 = Debug|Win32
 		{1A33AD33-0ADA-4CB7-AF49-82F19E7AC41E}.Debug|Win32.ActiveCfg = Debug|Win32
