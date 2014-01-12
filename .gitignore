@@ -6,3 +6,4 @@ OtherStuff
 *.patch
 ipch
 *.map
+*.opensdf
