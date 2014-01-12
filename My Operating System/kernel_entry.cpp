@@ -80,7 +80,7 @@ _asm { /* Set up the segments and stack */
 	InitializeSyscallHandler();
 
 	/* This code just sets up basic virtual memory so we can jump to a virtual address of 3GB */
-	vmmngr_initialize(0x000000, 0x000000);
+	vmmngr_initialize(0x100000, 0xc0000000);
 
 	EnableInterrupts();
 

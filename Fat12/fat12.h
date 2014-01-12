@@ -109,4 +109,4 @@ typedef struct _FAT12_FILE_ENTRY
 	uint32_t currentCluster; /* The current cluster, used by the FILE descriptors */
 } FAT12_FILE_ENTRY, *PFAT12_FILE_ENTRY;
 
-extern PFILESYSTEM fat12_mount(PFAT12_BOOTSECTOR bootsector, PFILESYSTEM fileSystem);
+extern PFILESYSTEM fat12_mount(PFAT12_BOOTSECTOR bootsector);

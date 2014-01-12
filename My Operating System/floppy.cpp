@@ -22,6 +22,8 @@ uint32_t _CurrentDrive = 0;
 /* You can change this as needed. It must be below 16MB and in idenitity mapped memory! */
 int DMA_BUFFER = 0x1000;
 
+bool floppyDMABufferInitialized = false;
+
 /* FDC uses DMA channel 2 */
 const int FDC_DMA_CHANNEL = 2;
 
@@ -78,10 +80,16 @@ bool flpydsk_initialize_dma(unsigned length)
 
 	//dma_unmask_all(1); /* Unmask dma channel 2 */
 
+	if (!floppyDMABufferInitialized)
+	{
+		DMA_BUFFER = (uint32_t)physical_memorymgr_allocate_block();
+		floppyDMABufferInitialized = true;
+	}
+
 	outb (0x0a,0x06);	//mask dma channel 2
 	outb (0xd8,0xff);	//reset master flip-flop
-	outb (0x04, 0);     //address=0x1000 
-	outb (0x04, 0x10);
+	outb (0x04, DMA_BUFFER & 0xFF);     //address=0x1000
+	outb (0x04, (DMA_BUFFER & 0xFF00) >> 8);
 	outb (0xd8, 0xff);  //reset master flip-flop
 	outb (0x05, 0xff);  //count to 0x23ff (number of bytes in a 3.5" floppy disk track)
 	outb (0x05, 0x23);
@@ -425,5 +433,5 @@ void flpydsk_mount_filesystem()
 	bootsector = (PFAT12_BOOTSECTOR)flpydsk_read_sector(0);
 
 	// TODO: There is a bug here!!!!!
-	volRegisterFileSystem(fat12_mount(bootsector, (PFILESYSTEM)(0x100000)), 0);
+	volRegisterFileSystem(fat12_mount(bootsector), 0);
 }

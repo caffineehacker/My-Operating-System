@@ -111,14 +111,15 @@ void vmmngr_initialize(uint32_t currentPhysicalBase, uint32_t currentVirtualBase
  
 	///* Allocates a 4MB identity page table */
 	pagetable* table2 = (pagetable*)physical_memorymgr_allocate_block();
-	//if (!table2)
-	//	return;
+	if (!table2)
+		return;
 
 	/* Clear page table */
 	memset(table, 0, sizeof(pagetable));
+	memset(table2, 0, sizeof(pagetable));
 
 	/* 1st 4mb are idenitity mapped */
-	for (int i=0, frame=0x0, virt=0xC0000000; i<1024; i++, frame+=4096, virt+=4096)
+	for (int i=0, frame=0x0, virt=0x00000000; i<1024; i++, frame+=4096, virt+=4096)
 	{
  		/* Create a new page */
 		pagetable_entry page = 0;
@@ -142,20 +143,20 @@ void vmmngr_initialize(uint32_t currentPhysicalBase, uint32_t currentVirtualBase
 	}
 
 	/* Create default directory table */
-	pagedirectory* dir = (pagedirectory*)physical_memorymgr_allocate_blocks(sizeof(pagedirectory) / 4096);
+	pagedirectory* dir = (pagedirectory*)physical_memorymgr_allocate_blocks(3);
 	if (!dir)
 		return;
  
 	/* Clear directory table and set it as current */
 	memset(dir, 0, sizeof(pagedirectory));
 
-	pagedirectory_entry* entry = &dir->m_entries[PAGE_DIRECTORY_INDEX(currentVirtualBase)];
+	/*pagedirectory_entry* entry = &dir->m_entries[PAGE_DIRECTORY_INDEX(currentVirtualBase)];
 	pagedirectory_entry_add_attrib(entry, PAGEDIRECTORY_ENTRY_PRESENT_MASK);
 	pagedirectory_entry_add_attrib(entry, PAGEDIRECTORY_ENTRY_WRITABLE_MASK);
-	pagedirectory_entry_set_frame(entry, (uint32_t)table);
+	pagedirectory_entry_set_frame(entry, (uint32_t)table);*/
 
 	///* 4MB identity directory */
-	pagedirectory_entry* entry2 = &dir->m_entries[PAGE_DIRECTORY_INDEX(0xC0000000)];
+	pagedirectory_entry* entry2 = &dir->m_entries[PAGE_DIRECTORY_INDEX(0x00000000)];
 	pagedirectory_entry_add_attrib(entry2, PAGEDIRECTORY_ENTRY_PRESENT_MASK);
 	pagedirectory_entry_add_attrib(entry2, PAGEDIRECTORY_ENTRY_WRITABLE_MASK);
 	pagedirectory_entry_set_frame(entry2, (uint32_t)table2);
