@@ -50,7 +50,7 @@ inline void flpydsk_wait_irq()
 }
 
 /* Initialize DMA */
-bool flpydsk_initialize_dma(unsigned length)
+bool flpydsk_initialize_dma()
 {
 	//union{
 	//	uint8_t byte[4]; /* Lo[0], Mid[1], Hi[2] */
@@ -367,6 +367,15 @@ void flpydsk_lba_to_chs(int lba, int *head, int *track, int *sector)
 
 void* flpydsk_handleReadSectorRequest(void* data)
 {
+	/* Initialize DMA */
+	flpydsk_initialize_dma();
+
+	/* Reset the fdc */
+	flpydsk_reset();
+
+	/* Set drive information */
+	flpydsk_drive_data(13, 1, 0xf, true);
+
 	return flpydsk_read_sector((uint32_t)data);
 }
 
@@ -378,7 +387,7 @@ void flpydsk_install(int irq)
 	SetSyscallFunctionHandler(flpydsk_handleReadSectorRequest, SYSCALL_READ_FLOPPY_SECTOR);
 
 	/* Initialize DMA */
-	flpydsk_initialize_dma(512);
+	flpydsk_initialize_dma();
 
 	/* Reset the fdc */
 	flpydsk_reset();

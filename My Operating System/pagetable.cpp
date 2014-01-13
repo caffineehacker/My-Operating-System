@@ -150,10 +150,10 @@ void vmmngr_initialize(uint32_t currentPhysicalBase, uint32_t currentVirtualBase
 	/* Clear directory table and set it as current */
 	memset(dir, 0, sizeof(pagedirectory));
 
-	/*pagedirectory_entry* entry = &dir->m_entries[PAGE_DIRECTORY_INDEX(currentVirtualBase)];
+	pagedirectory_entry* entry = &dir->m_entries[PAGE_DIRECTORY_INDEX(currentVirtualBase)];
 	pagedirectory_entry_add_attrib(entry, PAGEDIRECTORY_ENTRY_PRESENT_MASK);
 	pagedirectory_entry_add_attrib(entry, PAGEDIRECTORY_ENTRY_WRITABLE_MASK);
-	pagedirectory_entry_set_frame(entry, (uint32_t)table);*/
+	pagedirectory_entry_set_frame(entry, (uint32_t)table);
 
 	///* 4MB identity directory */
 	pagedirectory_entry* entry2 = &dir->m_entries[PAGE_DIRECTORY_INDEX(0x00000000)];

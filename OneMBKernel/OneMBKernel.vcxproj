@@ -78,6 +78,7 @@
       <IgnoreStandardIncludePath>true</IgnoreStandardIncludePath>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
+      <EnableEnhancedInstructionSet>NoExtensions</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>false</GenerateDebugInformation>
