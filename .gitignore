@@ -8,3 +8,5 @@ ipch
 *.map
 *.opensdf
 *.sdf
+log.txt
+logdebug.log
