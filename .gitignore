@@ -10,3 +10,7 @@ ipch
 *.sdf
 log.txt
 logdebug.log
+*.db
+*.opendb
+*.db-shm
+*.db-wal
