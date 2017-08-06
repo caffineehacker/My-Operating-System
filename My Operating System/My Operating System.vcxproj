@@ -162,7 +162,7 @@
     </Link>
     <PostBuildEvent>
       <Command>cd "$(OutDir)"
-"$(SolutionDir)Windows Fat12 Floppy Image Writer\bin\$(Configuration)\Windows Fat12 Floppy Image Writer.exe" floppy.img kernel.exe Stage2.bin onembstb.exe</Command>
+"$(SolutionDir)Windows Fat12 Floppy Image Writer\bin\$(Configuration)\Windows Fat12 Floppy Image Writer.exe" floppy.img boot1.bin kernel.exe Stage2.bin onembstb.exe</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -202,7 +202,7 @@
     </Link>
     <PostBuildEvent>
       <Command>cd $(OutDir)
-$(SolutionDir)Windows Fat12 Floppy Image Writer\bin\$(Configuration)\Windows Fat12 Floppy Image Writer.exe floppy.img kernel.exe Stage2.bin</Command>
+$(SolutionDir)Windows Fat12 Floppy Image Writer\bin\$(Configuration)\Windows Fat12 Floppy Image Writer.exe floppy.img boot1.bin kernel.exe Stage2.bin onembstb.exe</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

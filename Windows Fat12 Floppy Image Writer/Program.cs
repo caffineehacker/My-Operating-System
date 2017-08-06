@@ -106,10 +106,7 @@ namespace Windows_Fat12_Floppy_Image_Writer
 
             FileInfo image = new FileInfo(imageFileName);
             FileStream fStream;
-            if (image.Exists)
-                fStream = image.Open(FileMode.Open, FileAccess.ReadWrite);
-            else
-                fStream = createNewFloppyImage(image);
+            fStream = createNewFloppyImage(image, new FileInfo(args[1]));
 
             FAT12_BOOT_SECTOR bootSector = LoadBootSector(fStream);
             FAT12_MOUNT_INFO mount_info = new FAT12_MOUNT_INFO();
@@ -122,15 +119,30 @@ namespace Windows_Fat12_Floppy_Image_Writer
             mount_info.rootOffset = (uint)(bootSector.Bpb.NumberOfFats * bootSector.Bpb.SectorsPerFat) + 1;
             mount_info.rootSize = (uint)(bootSector.Bpb.NumDirEntries * 32) / bootSector.Bpb.BytesPerSector;
 
-            for (int i = 1; i < args.Length; i++)
+            for (int i = 2; i < args.Length; i++)
 	        {
                 SaveFileToDiskImage(args[i], fStream, bootSector, mount_info);
 	        }
+
+            fStream.Seek(1474559, SeekOrigin.Begin);
+            fStream.WriteByte(0);
         }
 
-        private static unsafe FileStream createNewFloppyImage(FileInfo image)
+        private static unsafe FileStream createNewFloppyImage(FileInfo image, FileInfo bootloader)
         {
-            FileStream fStream = image.Create();
+            FileStream fStream;
+            if (image.Exists)
+                fStream = image.Open(FileMode.Open, FileAccess.ReadWrite);
+            else
+                fStream = image.Create();
+
+            FileStream bootloaderFile = bootloader.OpenRead();
+            byte[] bootloaderBuffer = new byte[512];
+            int readBytes = 0;
+            while ((readBytes = bootloaderFile.Read(bootloaderBuffer, 0, 512)) > 0)
+            {
+                fStream.Write(bootloaderBuffer, 0, readBytes);
+            }
 
             FAT12_BOOT_SECTOR bootSector = new FAT12_BOOT_SECTOR();
             bootSector.Bpb.OEMName[0] = (byte)'T';

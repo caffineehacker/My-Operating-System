@@ -14,3 +14,5 @@ logdebug.log
 *.opendb
 *.db-shm
 *.db-wal
+bochs_log.txt
+bx_enh_dbg.ini
