@@ -78,7 +78,6 @@ endstruc
 ;---------------------------------------------
  
 BiosGetMemoryMap:
-	pushad
 	xor	ebx, ebx
 	xor	bp, bp			; number of entries stored here
 	mov	edx, 'PAMS'		; 'SMAP'
@@ -114,5 +113,4 @@ BiosGetMemoryMap:
 .error:
 	stc
 .done:
-	popad
 	ret

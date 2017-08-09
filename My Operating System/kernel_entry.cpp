@@ -18,8 +18,14 @@ extern void main(multiboot_info* bootinfo);
 void __cdecl kernel_entry(multiboot_info* bootinfo)
 {
 #ifdef ARCH_X86
+	uint32_t kernelSize;
+	uint32_t memSize;
+	memory_region* region;
+	uint32_t i;
+
 _asm { /* Set up the segments and stack */
 	cli
+	mov ebx, bootinfo; Move the argument to the new stack
 	mov ax, 10h /* Use the data selector */
 	mov ds, ax
 	mov es, ax
@@ -27,14 +33,13 @@ _asm { /* Set up the segments and stack */
 	mov gs, ax
 	mov ss, ax
 
-	mov eax, bootinfo ; Move the argument to the new stack
 	mov esp, 0x90000 /* Stack base address */
 	
 	mov ebp, esp /* Store this address for ret commands */
-	sub esp, 8 ; Make sure we still have room for bootinfo
+	sub esp, 0x8c ; Make sure we still have room for bootinfo
 	push ebp
 
-	mov bootinfo, eax
+	mov bootinfo, ebx
 }
 #endif
 
@@ -46,25 +51,25 @@ _asm { /* Set up the segments and stack */
 	/* Call dtor's */
 	_exit();
 #else
-	uint32_t kernelSize = 0;
+
 	_asm
 	{
 		mov word ptr [kernelSize], dx
 	}
 
 	/* Get memory size in KB */
-	uint32_t memSize = 1024 + (uint32_t)bootinfo->memorySize;
+	memSize = 1024 + (uint32_t)bootinfo->memorySize;
 	/* Place the physical memory bitmap at the end of the kernel */
-	physical_memorymgr_init(memSize, 0x100000 + kernelSize*512);
+	physical_memorymgr_init(memSize, 0x100000 + kernelSize * 512);
 
-	memory_region* region = (memory_region*)0x1000;
-	for (uint32_t i = 0; i < 15; i++)
+	region = (memory_region*)(bootinfo->mmap_addr - 0x100 /* Adjust for segment selector */);
+	for (i = 0; i < bootinfo->mmap_length; i++)
 	{
 		/* Sanity check; if type is > 4 mark it reserved */
 		if (region[i].type > 4)
-			region[i].type = 1;
+			region[i].type = 2;
 
-		/* If start address is 0, there is no more entries, break out */
+		/* If start address is 0, there are no more entries, break out */
 		if (i > 0 && region[i].startLo == 0)
 			break;
 

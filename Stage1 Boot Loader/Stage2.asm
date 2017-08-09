@@ -37,7 +37,7 @@ msgFailure db 0x0D, 0x0A, "*** FATAL: MISSING OR CURRUPT KRNL.SYS. Press Any Key
 
 boot_info:
 istruc multiboot_info
-	at multiboot_info.flags,			dd 0
+	at multiboot_info.flags,			dd 0xDEADBEEF
 	at multiboot_info.memoryLo,			dd 0
 	at multiboot_info.memoryHi,			dd 0
 	at multiboot_info.bootDevice,		dd 0
@@ -106,10 +106,18 @@ main:
 	mov		word [boot_info+multiboot_info.memoryHi], bx
 	mov		word [boot_info+multiboot_info.memoryLo], ax
 
-	mov		eax, 0x0
-	mov		ds, ax
+	push es
+	mov		eax, 0x10
+	mov		es, ax
 	mov		di, 0x1000
+	mov     ebp, 0
 	call	BiosGetMemoryMap
+	pop es
+
+	mov dword [boot_info+multiboot_info.mmap_length], ebp
+	mov eax, 0x1100
+	mov dword [boot_info+multiboot_info.mmap_addr], eax
+	xor eax, eax
 
 	;-------------------------------;
 	;   Print loading message	;

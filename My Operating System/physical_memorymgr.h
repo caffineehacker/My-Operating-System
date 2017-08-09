@@ -9,6 +9,8 @@
 /* Block alignment (all blocks start at a multiple of this) */
 #define PMMNGR_BLOCK_ALIGN	PMMNGR_BLOCK_SIZE
 
+#pragma pack(push, 1)
+
 struct memory_region
 {
 	uint32_t	startLo;
@@ -18,6 +20,8 @@ struct memory_region
 	uint32_t	type;
 	uint32_t	acpi_3_0;
 };
+
+#pragma pack(pop,1)
 
 extern void physical_memorymgr_init(size_t memSize, uint32_t bitmap);
 extern void physical_memorymgr_initialize_region(uint32_t base, size_t size);

@@ -19,9 +19,12 @@ inline void physical_memorymgr_setBlockUsed(int blockNumber)
   physical_memorymgr_memory_map[blockNumber / 32] |= (1 << (blockNumber % 32));
 }
 
-inline void physical_memorymgr_setBlockFree(int blockNumber)
+// Returns true if the memory changed from used to free...
+inline bool physical_memorymgr_setBlockFree(int blockNumber)
 {
+  bool returnValue = physical_memorymgr_memory_map[blockNumber / 32] &= (1 << (blockNumber % 32)) > 0;
   physical_memorymgr_memory_map[blockNumber / 32] &= ~(1 << (blockNumber % 32));
+  return returnValue;
 }
 
 inline bool physical_memorymgr_isBlockUsed(int blockNumber)
@@ -128,11 +131,12 @@ void physical_memorymgr_initialize_region(uint32_t base, size_t size)
 	int blocks = size / PMMNGR_BLOCK_SIZE;
 
 	for (; blocks>0; blocks--) {
-		physical_memorymgr_setBlockFree(align++);
-		physical_memorymgr_used_blocks--;
+		/* first block is always set. This blocks using null (0) as a valid address */
+		if (align != 0 && physical_memorymgr_setBlockFree(align)) {
+			physical_memorymgr_used_blocks--;
+		}
+		align++;
 	}
-
-	physical_memorymgr_setBlockUsed(0);	/* first block is always set. This blocks using null (0) as a valid address */
 }
 
 void physical_memorymgr_deinitialize_region(uint32_t base, size_t size)

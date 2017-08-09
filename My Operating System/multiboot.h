@@ -8,9 +8,6 @@ struct multiboot_info
 {
 	uint32_t flags;
 	uint64_t memorySize;
-
-	/*uint32_t memoryLo;*/ /* memory size. Present if flags[0] is set */
-	/*uint32_t memoryHi;*/
 	uint32_t bootDevice; /* boot device. Present if flags[1] is set */
 	uint32_t cmdLine; /* kernel command line. Present if flags[2] is set */
 	uint32_t mods_count; /* number of modules loaded along with kernel. present if flags[3] is set */
