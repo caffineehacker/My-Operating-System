@@ -62,7 +62,7 @@ _asm { /* Set up the segments and stack */
 	/* Place the physical memory bitmap at the end of the kernel */
 	physical_memorymgr_init(memSize, 0x100000 + kernelSize * 512);
 
-	region = (memory_region*)(bootinfo->mmap_addr - 0x100 /* Adjust for segment selector */);
+	region = (memory_region*)(bootinfo->mmap_addr);
 	for (i = 0; i < bootinfo->mmap_length; i++)
 	{
 		/* Sanity check; if type is > 4 mark it reserved */
