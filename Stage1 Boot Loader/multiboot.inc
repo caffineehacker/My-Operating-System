@@ -9,6 +9,7 @@ struc multiboot_info
 	.syms0		resd	1	; symbol table info. present if flags[4] or flags[5] is set
 	.syms1		resd	1
 	.syms2		resd	1
+	.syms3		resd	1
 	.mmap_length	resd	1	; memory map. Present if flags[6] is set
 	.mmap_addr	resd	1
 	.drives_length	resd	1	; phys address of first drive structure. present if flags[7] is set

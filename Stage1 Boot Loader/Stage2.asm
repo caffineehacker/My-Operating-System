@@ -35,6 +35,8 @@ jmp	main				; go to start
 LoadingMsg db 0x0D, 0x0A, "Searching for Operating System...", 0x00
 msgFailure db 0x0D, 0x0A, "*** FATAL: MISSING OR CURRUPT KRNL.SYS. Press Any Key to Reboot", 0x0D, 0x0A, 0x0A, 0x00
 
+ALIGN 4
+
 boot_info:
 istruc multiboot_info
 	at multiboot_info.flags,			dd 0xDEADBEEF
@@ -189,7 +191,7 @@ Stage3:
 	mov	gs, ax
 	mov	esp, 90000h		; stack begins from 90000h
 
-	call	ClrScr32
+	;call	ClrScr32
 
 	;-------------------------------;
 	; Copy kernel to 1MB		;
@@ -244,9 +246,10 @@ EXECUTE:
 	cli
 
 	mov		eax, 0x2badb002			; multiboot specs say eax should be this
-	mov		ebx, 0
+	mov		ebx, boot_info
 	mov		edx, [ImageSize]
-	push	dword boot_info
+	push	ebx
+	push    eax
 
 	call		ebp               	      ; Execute Kernel
 

@@ -15,6 +15,7 @@ struct multiboot_info
 	uint32_t syms0; /* symbol table info. present if flags[4] or flags[5] is set */
 	uint32_t syms1;
 	uint32_t syms2;
+	uint32_t syms3;
 	uint32_t mmap_length; /* memory map. Present if flags[6] is set */
 	uint32_t mmap_addr;
 	uint32_t drives_length; /* phys address of first drive structure. present if flags[7] is set */
