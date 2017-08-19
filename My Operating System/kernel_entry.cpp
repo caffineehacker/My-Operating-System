@@ -11,11 +11,18 @@
 #include "..\Fat12\fat12.h"
 #include "portableexecutable.h"
 #include "syscall.h"
+#include "ports.h"
 #endif
 
 extern void main(multiboot_info* bootinfo);
 
-void __cdecl kernel_entry(multiboot_info* bootinfo)
+#ifdef ONEMB_STUB
+void PrintLine(char* string);
+void ClearScreen();
+#endif
+
+// TODO: This is not correct. multiboot_info is passed in ebx and the bootinfo here should be just a header.
+void __cdecl kernel_entry(unsigned long magic, multiboot_info* bootinfo)
 {
 #ifdef ARCH_X86
 	uint32_t kernelSize;
@@ -51,6 +58,8 @@ _asm { /* Set up the segments and stack */
 	/* Call dtor's */
 	_exit();
 #else
+	ClearScreen();
+	PrintLine("Booting...");
 
 	_asm
 	{
@@ -75,28 +84,48 @@ _asm { /* Set up the segments and stack */
 
 		/* If region is avilable memory, initialize the region for use */
 		if (region[i].type == 1)
+		{
+			PrintLine("Marking memory as free");
 			physical_memorymgr_initialize_region(region[i].startLo, region[i].sizeLo);
+		}
+		else {
+			PrintLine("Not marking memory as free");
+		}
 	}
 
 	/* Reserve the region the kernel is in */
 	physical_memorymgr_deinitialize_region(0x100000, kernelSize*512);
 
+	PrintLine("Memory initialized");
+
 	HAL_Initialize();
+
+	PrintLine("HAL initialized");
+
 	InitializeSyscallHandler();
+
+	PrintLine("Syscall initialized");
 
 	/* This code just sets up basic virtual memory so we can jump to a virtual address of 3GB */
 	vmmngr_initialize(0x100000, 0xc0000000);
 
+	PrintLine("VM initialized");
+
 	EnableInterrupts();
+
+	PrintLine("Interrupts enabled");
 
 	flpydsk_set_working_drive(0);
 	flpydsk_install(0x26); /* 0x20 + 0x06 */
 	flpydsk_mount_filesystem();
 
+	PrintLine("Floppy disk mounted");
+
 	FILE kernl = volOpenFile("a:KERNEL.EXE");
 
-	if (kernl.flags & FS_INVALID == FS_INVALID)
+	if ((kernl.flags & FS_INVALID) == FS_INVALID)
 	{
+		PrintLine("ERROR!!!! Invalid kernel");
 		_asm
 		{
 			cli
@@ -107,6 +136,8 @@ _asm { /* Set up the segments and stack */
 	/* TODO: Get a mechanism for getting a file length */
 	void* kernelAddress = physical_memorymgr_allocate_blocks(((PFAT12_FILE_ENTRY_RAW)kernl.tag)->FileSize / PMMNGR_BLOCK_SIZE);
 	//void* kernelAddress = (void*)0x3000000;
+
+	PrintLine("Halting...");
 
 	_asm
 		{
@@ -151,3 +182,43 @@ _asm { /* Set up the segments and stack */
 #endif
 	for (;;);
 }
+
+#ifdef ONEMB_STUB
+
+uint16_t lineNumber = 0;
+
+void PrintLine(char* string)
+{
+	/* Video memory ptr
+	TODO: Get address from bios
+	*/
+	uint16_t *video_memory = (uint16_t *)0xB8000;
+	video_memory += lineNumber * 80;
+	lineNumber = (lineNumber + 1) % 80;
+
+	while (true)
+	{
+		if (*string == '\0')
+			return;
+
+		// Draw in grey on black
+		*video_memory++ = (*string++) | (0x0F00);
+	}
+}
+
+void ClearScreen() {
+	uint16_t *video_memory = (uint16_t *)0xB8000;
+	for (int i = 0; i < 2000; i++) {
+		*video_memory++ = ' ' | (14 << 8);
+	}
+
+	// Set cursor to 0, 0
+	outb(0x3d4, 0x0f);
+	outb(0x3d5, 0x0);
+	outb(0x3d4, 0x0e);
+	outb(0x3d5, 0x0);
+
+	lineNumber = 0;
+}
+
+#endif
