@@ -24,8 +24,8 @@ FILE fsysFat12Open(const char* FileName)
 {
 	FILE curFile;
 	char* p = 0;
-	bool rootDir=true;
-	char* path = (char*) FileName;
+	bool rootDir = true;
+	char* path = (char*)FileName;
 
 	/* Any '\'s in path? */
 	p = strchr(path, '\\');
@@ -51,11 +51,11 @@ FILE fsysFat12Open(const char* FileName)
 	{
 		/* Get pathname */
 		char pathname[16];
-		int i=0;
-		for (i=0; i<16; i++)
+		int i = 0;
+		for (i = 0; i < 16; i++)
 		{
 			/* If another '\' or end of line is reached, we are done */
-			if (p[i]=='\\' || p[i]=='\0')
+			if (p[i] == '\\' || p[i] == '\0')
 				break;
 
 			pathname[i] = p[i];
@@ -83,7 +83,7 @@ FILE fsysFat12Open(const char* FileName)
 			return curFile;
 
 		/* Find next '\' */
-		p = strchr (p+1, '\\');
+		p = strchr(p + 1, '\\');
 		if (p)
 			p++;
 	}
@@ -101,7 +101,7 @@ void fsysFat12Close(PFILE file)
 
 PFILESYSTEM fat12_mount(PFAT12_BOOTSECTOR bootsector)
 {
-	strcpy (_fat12_fsys.Name, "FAT12");
+	strcpy(_fat12_fsys.Name, "FAT12");
 	_fat12_fsys.Directory = fsysFat12FileEntry;
 	/*_fat12_fsys.Mount = fsysFat12Mount;*/
 	_fat12_fsys.Open = fsysFat12Open;
@@ -217,9 +217,9 @@ FILE fsysFat12FileEntry(const char* FileEntryName)
 void fsysFat12Read(PFILE file, unsigned char* Buffer, unsigned int Length)
 {
 	_asm {
-			cli
-			hlt
-		};
+		cli
+		hlt
+	};
 	if (file)
 	{
 		_asm {
@@ -248,10 +248,10 @@ void fsysFat12Read(PFILE file, unsigned char* Buffer, unsigned int Length)
 		memcpy(FAT + 512, sector, 512);
 
 		/* Read entry for next cluster */
-		uint16_t nextCluster = *( uint16_t*)&FAT[entryOffset];
+		uint16_t nextCluster = *(uint16_t*)&FAT[entryOffset];
 
 		/* Test if entry is odd or even */
-		if(((PFAT12_FILE_ENTRY)file->tag)->currentCluster & 0x0001)
+		if (((PFAT12_FILE_ENTRY)file->tag)->currentCluster & 0x0001)
 			nextCluster >>= 4;      /* Grab high 12 bits */
 		else
 			nextCluster &= 0x0FFF;   /*Grab low 12 bits */
@@ -281,7 +281,7 @@ FILE fsysFat12OpenSubDir(FILE kFile, const char* filename)
 
 	/* Get 8.3 directory name */
 	char DosFileName[12];
-	ToDosFileName (filename, DosFileName);
+	ToDosFileName(filename, DosFileName);
 	DosFileName[11] = 0;
 
 	/* Read directory */
