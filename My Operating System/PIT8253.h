@@ -48,3 +48,4 @@ extern void pit_initialize(uint8_t irq, uint8_t irCodeSeg);
 extern void pit8253_irq();
 extern void pit_start_counter0(uint32_t freq, uint8_t mode);
 extern uint32_t GetSystemTicks();
+extern void sleep_ms(int ms);

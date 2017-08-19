@@ -51,3 +51,16 @@ void pit_start_counter0(uint32_t freq, uint8_t mode_mask)
 	/* Reset ticks */
 	system_ticks=0;
 }
+
+void sleep_ms(int ms)
+{
+	// TODO: Deal with overflow...
+	// TODO: Make this actually wait milliseconds
+	int targetTicks = system_ticks + ms;
+	while (system_ticks < targetTicks)
+	{
+		__asm {
+			hlt
+		}
+	}
+}
