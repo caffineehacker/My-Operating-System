@@ -16,6 +16,7 @@ const int FLOPPY_IRQ = 6;
 
 /* Sectors per track */
 const int FLPY_SECTORS_PER_TRACK = 18;
+const int FLPY_HEADS_PER_CYLINDER = 2;
 
 uint32_t _CurrentDrive = 0;
 
@@ -479,9 +480,9 @@ int flpydsk_seek(uint8_t cyl, uint8_t head)
  /* Convert LBA to CHS */
 void flpydsk_lba_to_chs(int lba, int *cyl, int *head, int *sector)
 {
-	*cyl = lba / (2 * FLPY_SECTORS_PER_TRACK);
-	*head = ((lba % (2 * FLPY_SECTORS_PER_TRACK)) / FLPY_SECTORS_PER_TRACK);
-	*sector = ((lba % (2 * FLPY_SECTORS_PER_TRACK)) % FLPY_SECTORS_PER_TRACK + 1);
+	*cyl = lba / (FLPY_HEADS_PER_CYLINDER * FLPY_SECTORS_PER_TRACK);
+	*head = (lba / FLPY_SECTORS_PER_TRACK) % FLPY_HEADS_PER_CYLINDER;
+	*sector = (lba % FLPY_SECTORS_PER_TRACK) + 1;
 }
 
 void* flpydsk_handleReadSectorRequest(void* data)
@@ -529,16 +530,16 @@ uint8_t* flpydsk_read_sector(int sectorLBA)
 		return 0;
 
 	/* Convert LBA sector to CHS */
-	int head = 0, track = 0, sector = 1;
-	flpydsk_lba_to_chs(sectorLBA, &head, &track, &sector);
+	int cyl = 0, head = 0, sector = 1;
+	flpydsk_lba_to_chs(sectorLBA, &cyl, &head, &sector);
 
 	/* Turn motor on and seek to track */
 	flpydsk_control_motor(true);
-	if (flpydsk_seek((uint8_t)track, (uint8_t)head) != 0)
+	if (flpydsk_seek((uint8_t)cyl, (uint8_t)head) != 0)
 		return 0;
 
 	/* Read sector and turn motor off */
-	flpydsk_read_sector_imp((uint8_t)head, (uint8_t)track, (uint8_t)sector);
+	flpydsk_read_sector_imp((uint8_t)head, (uint8_t)cyl, (uint8_t)sector);
 	flpydsk_control_motor(false);
 
 	/* Warning: this is a bit hackish */

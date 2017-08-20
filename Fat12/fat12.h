@@ -3,21 +3,24 @@
 #include <cstdint>
 #include "..\My Operating System\filesystem.h"
 
+#pragma pack(push, 1)
+
 typedef struct _FAT12_BIOS_PARAMATER_BLOCK
 {
+	// Typical floppy values in comments
 	uint8_t OEMName[8];
-	uint16_t BytesPerSector;
-	uint8_t SectorsPerCluster;
-	uint16_t ReservedSectors;
-	uint8_t NumberOfFats;
-	uint16_t NumDirEntries;
-	uint16_t NumSectors;
-	uint8_t Media;
-	uint16_t SectorsPerFat;
-	uint16_t SectorsPerTrack;
-	uint16_t HeadsPerCyl;
-	uint32_t HiddenSectors;
-	uint32_t LongSectors;
+	uint16_t BytesPerSector; // 0x200
+	uint8_t SectorsPerCluster; // 0x1
+	uint16_t ReservedSectors; // 0x1
+	uint8_t NumberOfFats; // 0x2
+	uint16_t NumDirEntries; // 0xE0
+	uint16_t NumSectors; // 0xB40
+	uint8_t Media; // 0xF8
+	uint16_t SectorsPerFat; // 0x9
+	uint16_t SectorsPerTrack; // 0x12
+	uint16_t HeadsPerCyl; // 0x2
+	uint32_t HiddenSectors; // 0
+	uint32_t LongSectors; // 0
 } FAT12_BIOSPARAMATERBLOCK, *PFAT12_BIOSPARAMATERBLOCK;
 
 typedef struct _FAT12_BIOS_PARAMATER_BLOCK_EXT
@@ -110,3 +113,5 @@ typedef struct _FAT12_FILE_ENTRY
 } FAT12_FILE_ENTRY, *PFAT12_FILE_ENTRY;
 
 extern PFILESYSTEM fat12_mount(PFAT12_BOOTSECTOR bootsector);
+
+#pragma pack(pop, 1)

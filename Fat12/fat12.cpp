@@ -114,7 +114,7 @@ PFILESYSTEM fat12_mount(PFAT12_BOOTSECTOR bootsector)
 	_fat12_MountInfo.fatSize = bootsector->Bpb.SectorsPerFat;
 	_fat12_MountInfo.fatEntrySize = 8;
 	_fat12_MountInfo.numRootEntries = bootsector->Bpb.NumDirEntries;
-	_fat12_MountInfo.rootOffset = (bootsector->Bpb.NumberOfFats * bootsector->Bpb.SectorsPerFat) + 1;
+	_fat12_MountInfo.rootOffset = (bootsector->Bpb.NumberOfFats * bootsector->Bpb.SectorsPerFat) + bootsector->Bpb.ReservedSectors;
 	_fat12_MountInfo.rootSize = (bootsector->Bpb.NumDirEntries * 32) / bootsector->Bpb.BytesPerSector;
 
 	_fat12_fsys.tag = &_fat12_MountInfo;
@@ -188,8 +188,7 @@ FILE fsysFat12FileEntry(const char* FileEntryName)
 			if (strcmp(DosFileName, name) == 0)
 			{
 				/* Found it, set up file info */
-				/* strcpy(file.name, DirectoryName); */
-				/* file.currentCluster = directory->FirstCluster; */
+
 				memcpy(&_fat12FileEntry, fat12FileEntry, sizeof(FAT12_FILE_ENTRY_RAW));
 
 				_fat12FileEntry.currentCluster = _fat12FileEntry.FirstCluster;
@@ -227,7 +226,7 @@ void fsysFat12Read(PFILE file, unsigned char* Buffer, unsigned int Length)
 			hlt
 		};
 		/* Starting physical sector, start on the 32nd sector to skip over the bootloader and two fats */
-		unsigned int physSector = 31 + (((PFAT12_FILE_ENTRY)file->tag)->currentCluster);
+		unsigned int physSector = _fat12_MountInfo.rootOffset + (((PFAT12_FILE_ENTRY)file->tag)->currentCluster);
 
 		/* Read in sector */
 		unsigned char* sector = (unsigned char*)flpydsk_read_sector(physSector);

@@ -137,7 +137,7 @@ _asm { /* Set up the segments and stack */
 	void* kernelAddress = physical_memorymgr_allocate_blocks(((PFAT12_FILE_ENTRY_RAW)kernl.tag)->FileSize / PMMNGR_BLOCK_SIZE);
 	//void* kernelAddress = (void*)0x3000000;
 
-	PrintLine("Halting...");
+	PrintLine("Kernel Mounted");
 
 	_asm
 		{
